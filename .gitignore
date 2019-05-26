@@ -1,0 +1,9 @@
+.idea
+*.iml
+target
+credentials.json
+.factorypath
+.classpath
+.settings
+.project
+config.json
