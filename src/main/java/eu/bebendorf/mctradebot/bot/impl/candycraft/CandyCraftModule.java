@@ -9,9 +9,9 @@ import eu.bebendorf.mctradebot.bot.service.PrepareService;
 public class CandyCraftModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(PrepareService.class).to(PrepareServiceImpl.class);
-        bind(PaymentService.class).to(PaymentServiceImpl.class);
-        bind(ControlService.class).to(ControlServiceImpl.class);
-        bind(MSGService.class).to(MSGServiceImpl.class);
+        bind(PrepareService.class).toInstance(new PrepareServiceImpl());
+        bind(PaymentService.class).toInstance(new PaymentServiceImpl());
+        bind(ControlService.class).toInstance(new ControlServiceImpl());
+        bind(MSGService.class).toInstance(new MSGServiceImpl());
     }
 }

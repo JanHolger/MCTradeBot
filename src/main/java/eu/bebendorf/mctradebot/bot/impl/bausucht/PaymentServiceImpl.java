@@ -50,7 +50,7 @@ public class PaymentServiceImpl implements PaymentService {
             return;
         if (!spl[9].equals("erhalten."))
             return;
-        double amount = Double.parseDouble(spl[3]);
+        double amount = Double.parseDouble(spl[3].replace(",", ""));
         balance += amount;
         client.getBus().fire(new PaymentEvent(spl[8], amount));
     }

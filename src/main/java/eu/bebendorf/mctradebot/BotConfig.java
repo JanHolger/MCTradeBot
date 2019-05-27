@@ -2,6 +2,7 @@ package eu.bebendorf.mctradebot;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import eu.bebendorf.mctradebot.bot.Server;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,23 +13,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Credentials {
+public class BotConfig {
 
-    String username;
-    String password;
+    Server server;
 
-    public static Credentials fromFile(File file){
+    public static BotConfig fromFile(File file){
         try {
             JsonObject json = new GsonBuilder().create().fromJson(new FileReader(file), JsonObject.class);
-            return new Credentials(json.get("username").getAsString(), json.get("password").getAsString());
+            return new BotConfig(Server.valueOf(json.get("server").getAsString()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return new Credentials("Player", null);
+        return null;
     }
 
 }

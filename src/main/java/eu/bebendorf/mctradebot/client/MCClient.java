@@ -11,14 +11,13 @@ import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 import com.google.inject.Inject;
-import eu.bebendorf.mctradebot.Credentials;
+import eu.bebendorf.mctradebot.BotConfig;
+import eu.bebendorf.mctradebot.BotCredentials;
 import eu.bebendorf.mctradebot.MCTradeBot;
 import eu.bebendorf.mctradebot.bot.Server;
 import eu.bebendorf.mctradebot.delay.PacketQueue;
-import lombok.Getter;
 
 import java.net.Proxy;
-import java.util.*;
 
 public class MCClient {
 
@@ -27,7 +26,9 @@ public class MCClient {
     private PacketQueue messageQueue;
 
     @Inject
-    private Credentials credentials;
+    private BotCredentials credentials;
+    @Inject
+    private BotConfig config;
 
     public void prepare(String host, int port){
         if(client != null){
@@ -54,7 +55,7 @@ public class MCClient {
                 }
             }
         });
-        if(MCTradeBot.getServer() == Server.BAUSUCHT){
+        if(config.getServer() == Server.BAUSUCHT){
             messageQueue = new PacketQueue(this, 1, 3100);
         }else{
             messageQueue = new PacketQueue(this, 1, 1100);

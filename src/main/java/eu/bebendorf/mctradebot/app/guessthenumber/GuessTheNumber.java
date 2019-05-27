@@ -12,7 +12,7 @@ import eu.bebendorf.mctradebot.client.MCEvent;
 
 public class GuessTheNumber implements App {
 
-    private static final int MAX_NUMBER = 1000;
+    private static final int MAX_NUMBER = 100;
     private static final float PAYOUT_PERCENTAGE = 0.95f;
 
     private int guessNumber= generateNumber();

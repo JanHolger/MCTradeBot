@@ -14,8 +14,15 @@ public class PaymentServiceImpl implements PaymentService {
     @Inject
     private MCClient client;
 
-    @Getter
     private double balance = 0;
+
+    public PaymentServiceImpl(){
+        System.out.println("Hey!");
+    }
+
+    public double getBalance(){
+        return balance;
+    }
 
     @Override
     public void pay(String username, double amount) {
@@ -34,7 +41,6 @@ public class PaymentServiceImpl implements PaymentService {
         if (p.getType() == MessageType.NOTIFICATION)
             return;
         String[] spl = p.getMessage().getFullText().split(" ");
-
         if (spl.length != 5)
             return;
         if (!spl[1].equals("hat"))
@@ -45,7 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
             return;
         if (spl[3].charAt(0) != '€')
             return;
-        double amount = Double.parseDouble(spl[3].substring(1));
+        double amount = Double.parseDouble(spl[3].substring(1).replace(",", ""));
         balance += amount;
         client.getBus().fire(new PaymentEvent(spl[0], amount));
     }
@@ -54,11 +60,15 @@ public class PaymentServiceImpl implements PaymentService {
     public void onBalance(MCClient client, ServerChatPacket p) {
         if (p.getType() == MessageType.NOTIFICATION)
             return;
+        if(p.getMessage().getFullText().contains("Kontostand"))
+            System.out.println(p.getMessage().getFullText());
         String text = p.getMessage().getFullText();
         if (!text.startsWith("Kontostand: €"))
             return;
+        System.out.println("Balance!");
         try {
             balance = Double.parseDouble(text.substring(13).replace(",", ""));
+            System.out.println(balance);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

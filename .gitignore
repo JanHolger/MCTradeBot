@@ -1,9 +1,12 @@
 .idea
 *.iml
 target
-credentials.json
+bots/candy-ibimsjustusjonas/credentials.json
 .factorypath
 .classpath
 .settings
 .project
-config.json
+bots/candy-ibimsjustusjonas/config.json
+.floo
+.flooignore
+bots
