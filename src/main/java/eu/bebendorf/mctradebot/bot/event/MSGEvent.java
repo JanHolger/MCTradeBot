@@ -1,4 +1,4 @@
-package eu.bebendorf.mctradebot.bot;
+package eu.bebendorf.mctradebot.bot.event;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

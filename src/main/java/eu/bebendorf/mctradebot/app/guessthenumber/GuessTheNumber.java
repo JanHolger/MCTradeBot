@@ -2,10 +2,11 @@ package eu.bebendorf.mctradebot.app.guessthenumber;
 
 import java.util.Random;
 
+import com.google.inject.Inject;
 import eu.bebendorf.mctradebot.app.App;
-import eu.bebendorf.mctradebot.bot.MSGService;
-import eu.bebendorf.mctradebot.bot.PaymentEvent;
-import eu.bebendorf.mctradebot.bot.PaymentService;
+import eu.bebendorf.mctradebot.bot.service.MSGService;
+import eu.bebendorf.mctradebot.bot.event.PaymentEvent;
+import eu.bebendorf.mctradebot.bot.service.PaymentService;
 import eu.bebendorf.mctradebot.client.MCClient;
 import eu.bebendorf.mctradebot.client.MCEvent;
 
@@ -14,16 +15,15 @@ public class GuessTheNumber implements App {
     private static final int MAX_NUMBER = 1000;
     private static final float PAYOUT_PERCENTAGE = 0.95f;
 
-    private int guessNumber;
+    private int guessNumber= generateNumber();
     private double pot = 0;
+    @Inject
     private PaymentService paymentService;
+    @Inject
     private MSGService msgService;
 
     public void init(MCClient client) {
         client.getBus().register(this);
-        paymentService = client.getService("payment");
-        msgService = client.getService("msg");
-        guessNumber = generateNumber();
     }
 
     private int generateNumber(){

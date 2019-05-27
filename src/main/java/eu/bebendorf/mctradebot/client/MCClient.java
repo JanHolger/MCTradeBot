@@ -10,6 +10,9 @@ import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import com.google.inject.Inject;
+import eu.bebendorf.mctradebot.Credentials;
+import eu.bebendorf.mctradebot.MCTradeBot;
 import eu.bebendorf.mctradebot.bot.Server;
 import eu.bebendorf.mctradebot.delay.PacketQueue;
 import lombok.Getter;
@@ -21,49 +24,37 @@ public class MCClient {
 
     private Client client = null;
     private MCEventBus bus = null;
-    private String username;
-    private String password;
-    private Map<String, Object> services = new HashMap<>();
     private PacketQueue messageQueue;
-    @Getter
-    private Server server = Server.CANDYCRAFT;
 
-    public MCClient(String username){
-        this(username, null);
-    }
-
-    public MCClient(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+    @Inject
+    private Credentials credentials;
 
     public void prepare(String host, int port){
         if(client != null){
             disconnect();
         }
         MinecraftProtocol protocol;
-        if (password != null) {
+        if (credentials.getPassword() != null) {
             try {
-                protocol = new MinecraftProtocol(username, password);
+                protocol = new MinecraftProtocol(credentials.getUsername(), credentials.getPassword());
             } catch (RequestException e) {
                 e.printStackTrace();
                 return;
             }
         } else {
-            protocol = new MinecraftProtocol(username);
+            protocol = new MinecraftProtocol(credentials.getUsername());
         }
         client = new Client(host, port, protocol, new TcpSessionFactory(Proxy.NO_PROXY));
         client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY);
         client.getSession().addListener(new SessionAdapter() {
             public void disconnected(DisconnectedEvent event) {
-                clearAfterDisconnect();
                 System.out.println("Disconnected: " + Message.fromString(event.getReason()).getFullText());
                 if(event.getCause() != null) {
                     event.getCause().printStackTrace();
                 }
             }
         });
-        if(server == Server.BAUSUCHT){
+        if(MCTradeBot.getServer() == Server.BAUSUCHT){
             messageQueue = new PacketQueue(this, 1, 3100);
         }else{
             messageQueue = new PacketQueue(this, 1, 1100);
@@ -89,15 +80,7 @@ public class MCClient {
     public void disconnect(String reason){
         if(client != null){
             client.getSession().disconnect(reason);
-            clearAfterDisconnect();
         }
-    }
-
-    private void clearAfterDisconnect(){
-        client = null;
-        bus.close();
-        bus = null;
-        services.clear();
     }
 
     public void sendMessage(String message){
@@ -111,14 +94,6 @@ public class MCClient {
 
     public MCEventBus getBus(){
         return bus;
-    }
-
-    public void registerService(String name, Object service){
-        services.put(name, service);
-    }
-
-    public <T> T getService(String name){
-        return (T) services.get(name);
     }
 
 }
